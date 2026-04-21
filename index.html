@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pirate Game Scoreboard</title>
+    <title>Master of the Seven Seas</title>
     <style>
         :root {
             --gold: #d4af37;
-            --parchment: rgba(255, 245, 220, 0.95);
-            --ink: #2c1e16;
+            --ink: #ffffff; /* Changed to white for better visibility on images */
             --leather: #5d4037;
         }
 
@@ -25,26 +24,28 @@
             margin: 0;
             padding: 10px;
             color: var(--ink);
+            /* Subtle shadow on all text for readability */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
 
         h1 {
-            color: white;
-            text-shadow: 2px 2px 4px #000;
-            margin: 20px 0;
-            font-size: clamp(1.5rem, 8vw, 3rem); /* Scales for mobile */
+            color: var(--gold);
+            text-shadow: 3px 3px 6px #000;
+            margin: 30px 0;
+            font-size: clamp(1.8rem, 10vw, 4rem);
             text-transform: uppercase;
             text-align: center;
+            letter-spacing: 4px;
         }
 
         .table-container {
-            background-color: var(--parchment);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 5px solid var(--leather);
-            margin-bottom: 20px;
+            /* Tan block removed */
+            background: none;
+            border: none;
+            box-shadow: none;
+            padding: 10px;
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             box-sizing: border-box;
         }
 
@@ -54,68 +55,77 @@
         }
 
         th, td {
-            border: 1px solid #8d6e63;
-            padding: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.4); /* Faded gold borders */
+            padding: 12px;
             text-align: center;
         }
 
         th {
-            background-color: var(--leather);
+            background-color: rgba(93, 64, 55, 0.8); /* Semi-transparent leather */
             color: var(--gold);
+            text-transform: uppercase;
+            font-size: 0.9rem;
         }
 
+        /* Styling inputs to be readable against background */
         input[type="number"] {
-            width: 60px;
+            width: 55px;
             padding: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--gold);
             border-radius: 4px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: bold;
         }
 
         .pirate-name {
             font-weight: bold;
-            background: rgba(0,0,0,0.05);
-            min-width: 100px;
+            color: var(--gold);
+            background: rgba(0,0,0,0.3);
+            min-width: 120px;
         }
 
         .total-cell {
-            font-weight: 800;
-            color: #b71c1c;
-            font-size: 1.2rem;
+            font-weight: 900;
+            color: #ff5252; /* Bright red for the final score */
+            font-size: 1.3rem;
+            background: rgba(0,0,0,0.3);
         }
 
         .reset-btn {
             background-color: #b71c1c;
             color: white;
-            padding: 15px 40px;
-            border: none;
+            padding: 15px 45px;
+            border: 2px solid var(--gold);
             border-radius: 8px;
             font-size: 1.2rem;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 4px #801111;
-            margin-bottom: 40px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            margin: 40px 0;
+            transition: transform 0.1s;
+        }
+
+        .reset-btn:active {
+            transform: translateY(3px);
         }
 
         /* --- MOBILE RESPONSIVE STYLES --- */
         @media screen and (max-width: 600px) {
-            /* Hide the table header on mobile */
-            thead {
-                display: none;
-            }
+            thead { display: none; }
 
-            /* Make every table element a block (stacks vertically) */
             table, tbody, tr, td {
                 display: block;
                 width: 100%;
             }
 
             tr {
-                margin-bottom: 20px;
-                border: 2px solid var(--leather);
+                margin-bottom: 25px;
+                border: 1px solid var(--gold);
+                background: rgba(0,0,0,0.4); /* Dark translucent backing for mobile cards */
                 border-radius: 8px;
-                background: white;
             }
 
             td {
@@ -123,42 +133,31 @@
                 justify-content: space-between;
                 align-items: center;
                 border: none;
-                border-bottom: 1px solid #eee;
-                padding: 10px 15px;
+                border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+                padding: 12px 20px;
                 box-sizing: border-box;
-                text-align: right;
             }
 
-            /* Add labels before the values using data-label attribute */
             td::before {
                 content: attr(data-label);
                 font-weight: bold;
-                text-align: left;
-                flex: 1;
-                color: var(--leather);
+                color: var(--gold);
+                text-shadow: none;
             }
 
             .pirate-name {
-                background-color: var(--leather);
-                color: var(--gold);
-                text-align: center;
+                background-color: rgba(212, 175, 55, 0.2);
                 justify-content: center;
-                font-size: 1.3rem;
+                font-size: 1.4rem;
             }
             
-            .pirate-name::before {
-                content: ""; /* No label needed for the name header */
-            }
-
-            .total-cell {
-                background: rgba(183, 28, 28, 0.1);
-            }
+            .pirate-name::before { content: ""; }
         }
     </style>
 </head>
 <body>
 
-    <h1>Pirate Scoreboard</h1>
+    <h1>Master of the Seven Seas</h1>
 
     <div class="table-container">
         <table id="scoreTable">
@@ -177,9 +176,7 @@
             </thead>
             <tbody>
                 <script>
-                    // Round labels for mobile view
                     const rounds = ["Rd 1", "Rd 2", "Rd 3", "Rd 4", "Rd 5", "Rd 6", "Rd 7"];
-                    
                     for (let i = 1; i <= 8; i++) {
                         let rowsHtml = `<tr class="pirate-row">
                             <td class="pirate-name" contenteditable="true">Pirate ${i}</td>`;
