@@ -7,12 +7,13 @@
     <style>
         :root {
             --pirate-gold: #ffdb64;
-            --leather: #5d4037;
+            --deep-sea: #1a1a1a; /* Fallback background color */
         }
 
         body {
-            /* Changed Font to Georgia */
             font-family: Georgia, 'Times New Roman', Times, serif;
+            /* Fallback color + Background Image */
+            background-color: var(--deep-sea); 
             background-image: url('background.png');
             background-size: cover;
             background-attachment: fixed;
@@ -23,9 +24,7 @@
             min-height: 100vh;
             margin: 0;
             padding: 10px;
-            /* Changed Text Color to #ffdb64 */
             color: var(--pirate-gold);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
         }
 
         h1 {
@@ -39,11 +38,15 @@
         }
 
         .table-container {
-            background: none;
-            padding: 10px;
+            /* Added a subtle dark tint so the table is ALWAYS visible */
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 219, 100, 0.2);
             width: 100%;
             max-width: 1100px;
             box-sizing: border-box;
+            backdrop-filter: blur(5px); /* Blurs background for a glass effect */
         }
 
         table {
@@ -58,11 +61,11 @@
         }
 
         th {
-            background-color: rgba(0, 0, 0, 0.6);
             color: var(--pirate-gold);
             text-transform: uppercase;
             font-size: 0.85rem;
             letter-spacing: 1px;
+            text-shadow: 2px 2px 2px #000;
         }
 
         input[type="number"] {
@@ -72,8 +75,7 @@
             border-radius: 4px;
             font-size: 1.1rem;
             text-align: center;
-            background: rgba(0, 0, 0, 0.4);
-            /* Input text color matches the theme */
+            background: rgba(0, 0, 0, 0.6);
             color: var(--pirate-gold);
             font-family: Georgia, serif;
             font-weight: bold;
@@ -82,16 +84,15 @@
         .pirate-name {
             font-weight: bold;
             color: var(--pirate-gold);
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.3);
             min-width: 130px;
-            cursor: text;
         }
 
         .total-cell {
             font-weight: 900;
-            color: #ff5252; /* Kept red for contrast on the winning score */
+            color: #ff5252;
             font-size: 1.4rem;
-            background: rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 2px #000;
         }
 
         .reset-btn {
@@ -104,32 +105,21 @@
             cursor: pointer;
             font-family: Georgia, serif;
             font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
             margin: 40px 0;
-            transition: transform 0.1s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
         }
 
-        .reset-btn:active {
-            transform: translateY(3px);
-        }
-
-        /* --- MOBILE RESPONSIVE STYLES --- */
+        /* MOBILE VIEW */
         @media screen and (max-width: 800px) {
             thead { display: none; }
-
-            table, tbody, tr, td {
-                display: block;
-                width: 100%;
-            }
-
+            table, tbody, tr, td { display: block; width: 100%; }
             tr {
                 margin-bottom: 30px;
                 border: 1px solid var(--pirate-gold);
-                background: rgba(0,0,0,0.6);
+                background: rgba(0,0,0,0.7);
                 border-radius: 12px;
                 overflow: hidden;
             }
-
             td {
                 display: flex;
                 justify-content: space-between;
@@ -139,23 +129,18 @@
                 padding: 12px 20px;
                 box-sizing: border-box;
             }
-
-            /* Round labels for mobile */
             td::before {
                 content: attr(data-label);
                 font-weight: bold;
                 color: var(--pirate-gold);
                 text-transform: uppercase;
-                font-size: 0.9rem;
+                font-size: 0.8rem;
             }
-
             .pirate-name {
-                background-color: rgba(255, 219, 100, 0.15);
+                background-color: rgba(255, 219, 100, 0.2);
                 justify-content: center;
                 font-size: 1.5rem;
-                padding: 15px;
             }
-            
             .pirate-name::before { content: ""; }
         }
     </style>
@@ -165,4 +150,72 @@
     <h1>Master of the Seven Seas</h1>
 
     <div class="table-container">
-        <table id="scoreTable">
+        <table>
+            <thead>
+                <tr>
+                    <th>Pirate</th>
+                    <th>Round 1</th>
+                    <th>Round 2</th>
+                    <th>Round 3</th>
+                    <th>Round 4</th>
+                    <th>Round 5</th>
+                    <th>Round 6</th>
+                    <th>Round 7</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="pirateBody">
+                </tbody>
+        </table>
+    </div>
+
+    <button class="reset-btn" onclick="resetGame()">RESET GAME</button>
+
+    <script>
+        // Use an array to manage the rounds
+        const rounds = ["Round 1", "Round 2", "Round 3", "Round 4", "Round 5", "Round 6", "Round 7"];
+
+        // Build the table when the page loads
+        function buildTable() {
+            const tbody = document.getElementById('pirateBody');
+            let html = "";
+
+            for (let i = 1; i <= 8; i++) {
+                html += `<tr class="pirate-row">
+                    <td class="pirate-name" contenteditable="true">Pirate ${i}</td>`;
+                
+                rounds.forEach(rd => {
+                    html += `<td data-label="${rd}"><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>`;
+                });
+
+                html += `<td data-label="TOTAL" class="total-cell">0</td></tr>`;
+            }
+            tbody.innerHTML = html;
+        }
+
+        function updateTotals() {
+            const rows = document.querySelectorAll('.pirate-row');
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('.score-input');
+                let total = 0;
+                inputs.forEach(input => {
+                    total += parseInt(input.value) || 0;
+                });
+                row.querySelector('.total-cell').textContent = total;
+            });
+        }
+
+        function resetGame() {
+            if (confirm("Are ye sure ye want to scrub the decks?")) {
+                const inputs = document.querySelectorAll('.score-input');
+                inputs.forEach(input => input.value = 0);
+                updateTotals();
+            }
+        }
+
+        // Trigger the build
+        buildTable();
+    </script>
+
+</body>
+</html>
