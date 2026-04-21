@@ -7,24 +7,37 @@
     <style>
         :root {
             --pirate-gold: #ffdb64;
-            --deep-sea: #1a1a1a; /* Fallback background color */
+            --deep-sea: #1a1a1a;
+        }
+
+        /* The Fix: Create a dedicated background layer */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Your background image goes here */
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1; /* Keeps it behind everything */
+            will-change: transform; /* Helps with mobile performance */
         }
 
         body {
             font-family: Georgia, 'Times New Roman', Times, serif;
-            /* Fallback color + Background Image */
             background-color: var(--deep-sea); 
-            background-image: url('background.png');
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
+            margin: 0;
+            padding: 10px;
+            color: var(--pirate-gold);
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 10px;
-            color: var(--pirate-gold);
+            /* Remove background-attachment: fixed from here */
         }
 
         h1 {
@@ -38,15 +51,15 @@
         }
 
         .table-container {
-            /* Added a subtle dark tint so the table is ALWAYS visible */
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             padding: 20px;
             border-radius: 15px;
             border: 1px solid rgba(255, 219, 100, 0.2);
             width: 100%;
             max-width: 1100px;
             box-sizing: border-box;
-            backdrop-filter: blur(5px); /* Blurs background for a glass effect */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px); /* Safari support */
         }
 
         table {
@@ -109,7 +122,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.7);
         }
 
-        /* MOBILE VIEW */
         @media screen and (max-width: 800px) {
             thead { display: none; }
             table, tbody, tr, td { display: block; width: 100%; }
@@ -164,30 +176,24 @@
                     <th>Total</th>
                 </tr>
             </thead>
-            <tbody id="pirateBody">
-                </tbody>
+            <tbody id="pirateBody"></tbody>
         </table>
     </div>
 
     <button class="reset-btn" onclick="resetGame()">RESET GAME</button>
 
     <script>
-        // Use an array to manage the rounds
         const rounds = ["Round 1", "Round 2", "Round 3", "Round 4", "Round 5", "Round 6", "Round 7"];
 
-        // Build the table when the page loads
         function buildTable() {
             const tbody = document.getElementById('pirateBody');
             let html = "";
-
             for (let i = 1; i <= 8; i++) {
                 html += `<tr class="pirate-row">
                     <td class="pirate-name" contenteditable="true">Pirate ${i}</td>`;
-                
                 rounds.forEach(rd => {
                     html += `<td data-label="${rd}"><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>`;
                 });
-
                 html += `<td data-label="TOTAL" class="total-cell">0</td></tr>`;
             }
             tbody.innerHTML = html;
@@ -213,7 +219,6 @@
             }
         }
 
-        // Trigger the build
         buildTable();
     </script>
 
