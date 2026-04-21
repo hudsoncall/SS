@@ -7,8 +7,9 @@
     <style>
         :root {
             --gold: #d4af37;
-            --parchment: rgba(255, 245, 220, 0.9);
+            --parchment: rgba(255, 245, 220, 0.95);
             --ink: #2c1e16;
+            --leather: #5d4037;
         }
 
         body {
@@ -22,26 +23,29 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding: 10px;
             color: var(--ink);
         }
 
         h1 {
             color: white;
             text-shadow: 2px 2px 4px #000;
-            margin-top: 20px;
-            font-size: 3rem;
+            margin: 20px 0;
+            font-size: clamp(1.5rem, 8vw, 3rem); /* Scales for mobile */
             text-transform: uppercase;
-            letter-spacing: 3px;
+            text-align: center;
         }
 
         .table-container {
             background-color: var(--parchment);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 5px solid #5d4037;
-            margin-bottom: 30px;
-            overflow-x: auto;
+            border: 5px solid var(--leather);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
         }
 
         table {
@@ -51,58 +55,104 @@
 
         th, td {
             border: 1px solid #8d6e63;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
         }
 
         th {
-            background-color: #5d4037;
+            background-color: var(--leather);
             color: var(--gold);
-            font-weight: bold;
         }
 
         input[type="number"] {
-            width: 50px;
-            padding: 5px;
+            width: 60px;
+            padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            background: transparent;
-            font-weight: bold;
+            font-size: 1rem;
             text-align: center;
         }
 
         .pirate-name {
             font-weight: bold;
-            font-style: italic;
             background: rgba(0,0,0,0.05);
+            min-width: 100px;
         }
 
         .total-cell {
             font-weight: 800;
             color: #b71c1c;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
         .reset-btn {
             background-color: #b71c1c;
             color: white;
-            padding: 15px 30px;
+            padding: 15px 40px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 1.2rem;
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 4px #801111;
-            transition: all 0.2s;
+            margin-bottom: 40px;
         }
 
-        .reset-btn:hover {
-            background-color: #d32f2f;
-        }
+        /* --- MOBILE RESPONSIVE STYLES --- */
+        @media screen and (max-width: 600px) {
+            /* Hide the table header on mobile */
+            thead {
+                display: none;
+            }
 
-        .reset-btn:active {
-            box-shadow: 0 0 #801111;
-            transform: translateY(4px);
+            /* Make every table element a block (stacks vertically) */
+            table, tbody, tr, td {
+                display: block;
+                width: 100%;
+            }
+
+            tr {
+                margin-bottom: 20px;
+                border: 2px solid var(--leather);
+                border-radius: 8px;
+                background: white;
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border: none;
+                border-bottom: 1px solid #eee;
+                padding: 10px 15px;
+                box-sizing: border-box;
+                text-align: right;
+            }
+
+            /* Add labels before the values using data-label attribute */
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                text-align: left;
+                flex: 1;
+                color: var(--leather);
+            }
+
+            .pirate-name {
+                background-color: var(--leather);
+                color: var(--gold);
+                text-align: center;
+                justify-content: center;
+                font-size: 1.3rem;
+            }
+            
+            .pirate-name::before {
+                content: ""; /* No label needed for the name header */
+            }
+
+            .total-cell {
+                background: rgba(183, 28, 28, 0.1);
+            }
         }
     </style>
 </head>
@@ -127,20 +177,19 @@
             </thead>
             <tbody>
                 <script>
+                    // Round labels for mobile view
+                    const rounds = ["Rd 1", "Rd 2", "Rd 3", "Rd 4", "Rd 5", "Rd 6", "Rd 7"];
+                    
                     for (let i = 1; i <= 8; i++) {
-                        document.write(`
-                            <tr class="pirate-row">
-                                <td class="pirate-name" contenteditable="true">Pirate ${i}</td>
-                                <td><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>
-                                <td><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>
-                                <td><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>
-                                <td><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>
-                                <td><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>
-                                <td><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>
-                                <td><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>
-                                <td class="total-cell">0</td>
-                            </tr>
-                        `);
+                        let rowsHtml = `<tr class="pirate-row">
+                            <td class="pirate-name" contenteditable="true">Pirate ${i}</td>`;
+                        
+                        rounds.forEach(rd => {
+                            rowsHtml += `<td data-label="${rd}"><input type="number" class="score-input" value="0" oninput="updateTotals()"></td>`;
+                        });
+
+                        rowsHtml += `<td data-label="TOTAL" class="total-cell">0</td></tr>`;
+                        document.write(rowsHtml);
                     }
                 </script>
             </tbody>
@@ -152,21 +201,18 @@
     <script>
         function updateTotals() {
             const rows = document.querySelectorAll('.pirate-row');
-            
             rows.forEach(row => {
                 const inputs = row.querySelectorAll('.score-input');
                 let total = 0;
-                
                 inputs.forEach(input => {
                     total += parseInt(input.value) || 0;
                 });
-                
                 row.querySelector('.total-cell').textContent = total;
             });
         }
 
         function resetGame() {
-            if (confirm("Are ye sure ye want to scrub the decks and reset the scores?")) {
+            if (confirm("Are ye sure ye want to scrub the decks?")) {
                 const inputs = document.querySelectorAll('.score-input');
                 inputs.forEach(input => input.value = 0);
                 updateTotals();
